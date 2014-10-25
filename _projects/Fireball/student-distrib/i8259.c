@@ -42,34 +42,26 @@ i8259_init(void)
 	 unsigned char a1;
 	 unsigned char a2;
  
-	 a1 = inb(PIC1_DATA);                        // save masks
-	 a2 = inb(PIC2_DATA);
+	a1 = inb(PIC1_DATA);                        // save masks
+	a2 = inb(PIC2_DATA);
+	
+  	outb(ICW1, PIC1_COMMAND);  					// starts the initialization sequence (in cascade mode)
+	outb(ICW1, PIC2_COMMAND);					// we can even define it as ICW1 instead of the addition
+
+	outb(ICW2_MASTER, PIC1_DATA);               // ICW2: Master PIC vector offset
+	outb(ICW2_SLAVE, PIC2_DATA);   				// ICW2: Slave PIC vector offset
+
+	outb(ICW3_MASTER, PIC1_DATA); 				// ICW3: tell Master PIC that there is a slave PIC at IRQ2 (0000 0100)
+	outb(ICW3_SLAVE, PIC2_DATA);    			// ICW3: tell Slave PIC its cascade identity (0000 0010)
  
-  	outb(PIC1_COMMAND, ICW1);  					// starts the initialization sequence (in cascade mode)
-	outb(PIC2_COMMAND, ICW1);					// we can even define it as ICW1 instead of the addition
-
-	outb(PIC1_DATA, ICW2_MASTER);               // ICW2: Master PIC vector offset
-	outb(PIC2_DATA, ICW2_SLAVE);   				// ICW2: Slave PIC vector offset
-
-	outb(PIC1_DATA, ICW3_MASTER); 				// ICW3: tell Master PIC that there is a slave PIC at IRQ2 (0000 0100)
-	outb(PIC2_DATA, ICW3_SLAVE);    			// ICW3: tell Slave PIC its cascade identity (0000 0010)
+	outb(ICW4, PIC1_DATA);
+	outb(ICW4, PIC2_DATA);
  
-	outb(PIC1_DATA, ICW4);
-	outb(PIC2_DATA, ICW4);
- 
- 	outb(PIC1_DATA, a1);   						// restore saved masks.
-	outb(PIC2_DATA, a2);
-/*	There are some wait statemets which come below outb commands. Refer to http://wiki.osdev.org/8259_PIC for exact code and some of the code is below*/
+ 	outb(a1, PIC1_DATA);   						// restore saved masks.
+	outb(a2, PIC2_DATA);
 
-	//io_wait();			in case you want to use it, #include <io.h>
-	/*io_wait() checks the descriptors that the program is interested in to see whether any of them are ready. If none of them are ready, io_wait() tries to pause until one of them is ready, so that it does not take time away from other programs running on the same computer.
-	io_wait pays attention to timeouts: if a descriptor reaches its timeout, and the program is interested in reading or writing that descriptor, io_wait will return promptly.
-
-	Under some circumstances, io_wait will return even though no interesting descriptors are ready. Do not assume that a descriptor is ready merely because io_wait has returned.
-
-	io_wait is not interrupted by the delivery of a signal. Programs that expect interruption are unreliable: they will block if the same signal is delivered a moment before io_wait. The correct way to handle signals is with the self-pipe trick.
-*/
-//	printf(" MURALI WANTS SO MUCH MO ");
+	outb(0XFB, MASTER_8259_PORT + 1);
+	outb(0XFF, SLAVE_8259_PORT + 1);
 }
 
 /* Enable (unmask) the specified IRQ */
@@ -81,7 +73,6 @@ enable_irq(uint32_t irq_num)
  
     if(irq_num < 8)
     	port = PIC1_DATA;
-
     else
     {
         port = PIC2_DATA;
@@ -89,7 +80,7 @@ enable_irq(uint32_t irq_num)
     }
 
     value = inb(port) & ~(1 << irq_num);
-    outb(port, value);     
+    outb(value, port);     
 }
 
 /* Disable (mask) the specified IRQ */
@@ -101,7 +92,6 @@ disable_irq(uint32_t irq_num)
  
     if(irq_num < 8)
     	port = PIC1_DATA;
-    
     else
     {
         port = PIC2_DATA;
@@ -109,7 +99,7 @@ disable_irq(uint32_t irq_num)
     }
 
     value = inb(port) | (1 << irq_num);
-    outb(port, value);        
+    outb(value, port);        
 }	
 
 /* Send end-of-interrupt signal for the specified IRQ */
@@ -133,8 +123,10 @@ send_eoi(uint32_t irq_num)
 void
 init_keyboard(void)		
 {
-	enable_irq(0x21);
-	
+		enable_irq(1);
+//	enable_irq(0x21);
+	//printf(" reached init keyboard ");
+
 //#define KEYBOARD_PORT 0x60
 //#define KEYBOARD_STATUS_PORT 0x64                                                                                                                                            
 	return;
@@ -143,21 +135,25 @@ init_keyboard(void)
 void
 init_rtc(void)		
 {
-	enable_irq(0x28);
+
+	int rate = 0x0F;			// rate must be above 2 and not over 15
+	outb(0x8A, 0x70);		// set index to register A, disable NMI
+	char prev = inb(0x71);	// get initial value of register A
+	outb(0x8A, 0x70);		// reset index to A
+	outb((prev & 0xF0) | rate, 0x71); //write only our rate to A. Note, rate is the bottom 4 bits.
+
+
+	outb(0x8B, 0x70);		// select register B, and disable NMI
+	prev = inb(0x71);	// read the current value of register B
+	outb(0x8B, 0x70);		// set the index again (a read will reset the index to register D)
+	outb(prev | 0x40, 0x71);	// write the previous value ORed with 0x40. This turns on bit 6 of register B
 	
+
+	
+	enable_irq(8);
+
 //#define KEYBOARD_PORT 0x60
 //#define KEYBOARD_STATUS_PORT 0x64
                                                                                                                                              
 	return;
 }
-
-
-//////////////////////////aksdhflaksjdhflaksjdhflakjdhflajdhflaskjdf SIDDHARTH
-//void kbd_int_handler()
-//{
-//	char typed;
-//	inb(0x21, typed);
-//}
-
-//////////@#$%^&*(&^%&^#*^$*&^%(%(*^*%^@)* OEFUI#&* #r))
-
