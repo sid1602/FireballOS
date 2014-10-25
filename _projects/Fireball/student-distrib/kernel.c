@@ -156,41 +156,19 @@ entry (unsigned long magic, unsigned long addr)
 		tss.esp0 = 0x800000;
 		ltr(KERNEL_TSS);
 	}
-	/* DUMMY INTERRUPT DESCRIPTOR TABLE ENTRY */
-	{	
-		int i = 0;
-		idt_desc_t idt_entry;
-		for(i=0; i<32; i++)
-		{
-			SET_IDT_ENTRY(idt[i], dummy_int_handler);
-			idt_entry.seg_selector = KERNEL_CS;
-			idt_entry.dpl = 0;
-		}
-	}
 
-	/* KEYBOARD INTERRUPT DESCRIPTOR TABLE ENTRY */
-	{
-		idt_desc_t idt_entry;
-		SET_IDT_ENTRY(idt[33], kbd_int_handler);
-		idt_entry.seg_selector = KERNEL_CS;
-		idt_entry.dpl = 0;
-	}
+	/* EXCEPTION TABLE ENTRY */
 
-	/* RTC INTERRUPT DESCRIPTOR TABLE ENTRY */
-	{
-		idt_desc_t idt_entry;
-		SET_IDT_ENTRY(idt[40], rtc_int_handler);
-		idt_entry.seg_selector = KERNEL_CS;
-		idt_entry.dpl = 0;
-	}
+	// Note - We need to write each individual exception	
 
-	printf("SJDGSDJKGHSLDKGHSDLGKJSHDLGKJSHDGLKSJHGDLSDKJGHSDG");
+		lidt(idt_desc_ptr);
+		set_idt();
+
 	/* Init the PIC */
-	i8259_init();
+		i8259_init();
 
 	/* Initialize devices, memory, filesystem, enable device interrupts on the
 	 * PIC, any other initialization stuff... */
-
 
 //////////////////////	WRITTEN BY ME 	/////////////////////////////////////////////////////////////////////////////
 //RTC interrupts are disabled by default. If you turn on the RTC interrupts, the RTC will periodically generate IRQ 8.
@@ -205,7 +183,7 @@ entry (unsigned long magic, unsigned long addr)
 
 	init_rtc();				//
 	init_keyboard();		//
-	
+	printf("initialization is completed\n");
 //	enable_ints();		// (perform an STI) and reenable NMI if you wish
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -214,11 +192,16 @@ entry (unsigned long magic, unsigned long addr)
 	/* Do not enable the following until after you have set up your
 	 * IDT correctly otherwise QEMU will triple fault and simple close
 	 * without showing you any output */
-	/*printf("Enabling Interrupts\n");
-	sti();*/
-
+	printf("Enabling Interrupts\n");
+	sti();
 	/* Execute the first program (`shell') ... */
 
 	/* Spin (nicely, so we don't chew up cycles) */
 	asm volatile(".1: hlt; jmp .1;");
 }
+
+
+//init_paging()
+
+
+
