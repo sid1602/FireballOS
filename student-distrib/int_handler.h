@@ -10,15 +10,6 @@
 /* Sets up the IDT entries */
 extern void setup_idt(void* handler_address, int irq_num);
 
-/* Keyboard Interrupt handler */
-void kbd_int_handler();
-
-/* RTC Interrupt handler */
-void rtc_int_handler();
-
-/* Dummy Interrupt handler */
-void dummy_int_handler();
-
 void set_idt();
 
 void set_exception();

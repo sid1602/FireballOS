@@ -4,32 +4,8 @@
 #include "i8259.h"
 #include "debug.h"
 #include "int_handler.h"
-
-
-/* Keyboard Interrupt handler */
-/* Prints out character typed to screen */
-void kbd_int_handler()
-{
-	//char to_print;
-	//get this char somehow
-	printf("Keyboard INTERRUPT HANDLER");
-}
-
-/* RTC Interrupt handler */
-/* Should execute test_interrupts handler */
-void rtc_int_handler()
-{
-	printf("RTC INTERRUPT HANDLER");
-	test_interrupts();
-}
-
-/* Dummy Interrupt handler */
-/* Prints int # */
-void dummy_int_handler()
-{
-	printf("DUMMY INTERRUPT HANDLER");
-
-}
+#include "wrapper.h"
+#include "keyboard.h"
 
 void set_idt()
 {
@@ -91,8 +67,8 @@ void set_interrupt()
 		idt_entry.reserved3 = 0;
 		idt[33] = idt_entry; 
 		idt[40] = idt_entry; 
-		SET_IDT_ENTRY(idt[33], rtc_int_handler);
-		SET_IDT_ENTRY(idt[40], kbd_int_handler);		
+		SET_IDT_ENTRY(idt[40], &rtc_wrapper);
+		SET_IDT_ENTRY(idt[33], &kbd_wrapper);		
 }
 
 /* Exception handling functions below */
