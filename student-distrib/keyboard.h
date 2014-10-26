@@ -6,8 +6,6 @@
 
 extern void kbd_int_handler();
 
-extern void rtc_int_handler();
-
 extern void dummy_int_handler();
 
 #endif	/* ASM */

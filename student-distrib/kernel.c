@@ -11,7 +11,8 @@
 
 #include "rtc.h"
 #include "int_handler.h"
-
+#include "paging.h"
+ 
 #define PIC1			0x20		/*IO base address for master PIC*/
 #define PIC2			0xA0		/*IO base address for slave PIC */
 #define PIC1_COMMAND	PIC1 		
@@ -169,7 +170,8 @@ entry (unsigned long magic, unsigned long addr)
 
 	/* Initialize devices, memory, filesystem, enable device interrupts on the
 	 * PIC, any other initialization stuff... */
-
+	init_paging();
+	test_paging();
 	init_rtc();				//
 	init_keyboard();		//
 	printf("initialization is completed\n");
@@ -186,9 +188,3 @@ entry (unsigned long magic, unsigned long addr)
 	/* Spin (nicely, so we don't chew up cycles) */
 	asm volatile(".1: hlt; jmp .1;");
 }
-
-
-//init_paging()
-
-
-

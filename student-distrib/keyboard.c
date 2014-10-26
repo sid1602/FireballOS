@@ -2,6 +2,9 @@
 #include "lib.h"
 #include "i8259.h"
 
+int caps_count = 0;
+int offset = 0;
+
 /* Keyboard Interrupt handler */
 /********************************************************
 void													*
@@ -15,17 +18,15 @@ void kbd_int_handler()
 {
 	disable_irq(1);										//IRQ line was 1 so we get the port numbers
 	int to_print;										//disable line so we can complete this before handling some other interrupt 	
-//	int shift_flag = 0;
-//	int offset = 0;
-	//printf("Keyboard INTERRUPT HANDLER");
-	
 	to_print = inb(0x60);								//store received info into char to check with which key was pressed 
 	
-//	if(to_print == 0x14)
-//	{
-//		shift_flag = 1;
-//		offset = 32;
-//	}	
+	if(to_print == 0x3A)
+	{
+		caps_count++;
+		if(caps_count%2 == 1)
+			offset = 32;
+		else offset = 0;
+	}	
 		
 	switch(to_print)									//check which button was pressed on the keyboard
 	{
@@ -40,71 +41,57 @@ void kbd_int_handler()
 		case 0x09:	{	printf("8");	break;	}	
 		case 0x0A:	{	printf("9");	break;	}
 		case 0x0B:	{	printf("0");	break;	}
+	
 	/*	checking letters	*/	
-		case 0x1E:	{	printf("a");	break;	}
-
-//		case 0x1E:	{	printf("%c", 97 - offset);	break;	}				//a		
-		case 0x30:	{	printf("b");	break;	}
-		case 0x2E:	{	printf("c");	break;	}
-		case 0x20:	{	printf("d");	break;	}
-		case 0x12:	{	printf("e");	break;	}
-		case 0x21:	{	printf("f");	break;	}
-		case 0x22:	{	printf("g");	break;	}
-		case 0x23:	{	printf("h");	break;	}
-		case 0x17:	{	printf("i");	break;	}				
-		case 0x24:	{	printf("j");	break;	}
-		case 0x25:	{	printf("k");	break;	}
-		case 0x26:	{	printf("l");	break;	}
-		case 0x32:	{	printf("m");	break;	}
-		case 0x31:	{	printf("n");	break;	}
-		case 0x18:	{	printf("o");	break;	}
-		case 0x19:	{	printf("p");	break;	}
-		case 0x10:	{	printf("q");	break;	}
-		case 0x13:	{	printf("r");	break;	}		
-		case 0x1F:	{	printf("s");	break;	}				
-		case 0x14:	{	printf("t");	break;	}
-		case 0x16:	{	printf("u");	break;	}
-		case 0x2F:	{	printf("v");	break;	}
-		case 0x11:	{	printf("w");	break;	}
-		case 0x2D:	{	printf("x");	break;	}
-		case 0x15:	{	printf("y");	break;	}
-		case 0x2C:	{	printf("z");	break;	}
+		case 0x1E:	{	printf("%c", 97 - offset);	break;	}						
+		case 0x30:	{	printf("%c", 98 - offset);	break;	}
+		case 0x2E:	{	printf("%c", 99 - offset);	break;	}
+		case 0x20:	{	printf("%c", 100 - offset);	break;	}
+		case 0x12:	{	printf("%c", 101 - offset);	break;	}
+		case 0x21:	{	printf("%c", 102 - offset);	break;	}
+		case 0x22:	{	printf("%c", 103 - offset);	break;	}
+		case 0x23:	{	printf("%c", 104 - offset);	break;	}
+		case 0x17:	{	printf("%c", 105 - offset);	break;	}				
+		case 0x24:	{	printf("%c", 106 - offset);	break;	}
+		case 0x25:	{	printf("%c", 107 - offset);	break;	}
+		case 0x26:	{	printf("%c", 108 - offset);	break;	}
+		case 0x32:	{	printf("%c", 109 - offset);	break;	}
+		case 0x31:	{	printf("%c", 110 - offset);	break;	}
+		case 0x18:	{	printf("%c", 111 - offset);	break;	}
+		case 0x19:	{	printf("%c", 112 - offset);	break;	}
+		case 0x10:	{	printf("%c", 113 - offset);	break;	}
+		case 0x13:	{	printf("%c", 114 - offset);	break;	}		
+		case 0x1F:	{	printf("%c", 115 - offset);	break;	}				
+		case 0x14:	{	printf("%c", 116 - offset);	break;	}
+		case 0x16:	{	printf("%c", 117 - offset);	break;	}
+		case 0x2F:	{	printf("%c", 118 - offset);	break;	}
+		case 0x11:	{	printf("%c", 119 - offset);	break;	}
+		case 0x2D:	{	printf("%c", 120 - offset);	break;	}
+		case 0x15:	{	printf("%c", 121 - offset);	break;	}
+		case 0x2C:	{	printf("%c", 122 - offset);	break;	}		
 /*	checking special characters	*/	
-// 		case 0x0C:	{	printf("-");	break;	}
-// 		case 0x0D:	{	printf("=");	break;	}	
-// 		case 0x1A:	{	printf("[");	break;	}
-// 		case 0x1B:	{	printf("]");	break;	}
-// 		case 0x27:	{	printf(";");	break;	}
-// 		case 0x28:	{	printf("'");	break;	}
-// 		case 0x29:	{	printf("`");	break;	}
-// //		case 0x2B:	{	printf("'\'");	break;	}	
-// 		case 0x33:	{	printf(",");	break;	}
-// 		case 0x34:	{	printf(".");	break;	}
-// //		case 0x35:	{	printf("/");	break;	}
-// 		case 0x0F:	{	printf("%c", 9);	break;	}
-// 		case 0x39:	{	printf(" ");	break;	}
-// //		case 0x0E:	{	printf("");	break;	}
-
+		case 0x0C:	{	printf("-");	break;	}
+ 		case 0x0D:	{	printf("=");	break;	}	
+ 		case 0x1A:	{	printf("[");	break;	}
+ 		case 0x1B:	{	printf("]");	break;	}
+ 		case 0x27:	{	printf(";");	break;	}
+ 		case 0x28:	{	printf("'");	break;	}
+ 		case 0x29:	{	printf("`");	break;	}
+ 		case 0x33:	{	printf(",");	break;	}
+ 		case 0x34:	{	printf(".");	break;	}
+		case 0x35:	{	printf("/");	break;	}
+		case 0x39:	{	printf(" ");	break;	}
+ 		case 0x0E:	{	/*printf("");*/
+						int ptr = 45;
+						int a = ptr / 0;
+						printf("%d",a);
+ 						break;	}
 	}
 	send_eoi(1);										//inform when finished handling interrupt
 	enable_irq(1);										//unmask so that new interrupts can be taken care of
 }
 
 
-/* RTC Interrupt handler */
-/********************************************************
-void													*
-rtc_int_handler()										*	
-*	Inputs:			void								*
-*	Outputs:		writes video memory to screen 	 	*
-*	Return Value:	void								*
-*	Function: Should execute test_interrupts handler	*
-********************************************************/
-void rtc_int_handler()
-{
-	printf("RTC INTERRUPT HANDLER");
-	test_interrupts();									//calls function that writes video memory to screen.
-}
 
 /* Dummy Interrupt handler */
 /********************************************************
