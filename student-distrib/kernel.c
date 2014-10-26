@@ -7,10 +7,10 @@
 #include "lib.h"
 #include "i8259.h"
 #include "debug.h"
-//////////////////	WRITTEN BY ME 	/////////////////////////////////////////////////////////////////////////
+
+
 #include "rtc.h"
 #include "int_handler.h"
-
 
 #define PIC1			0x20		/*IO base address for master PIC*/
 #define PIC2			0xA0		/*IO base address for slave PIC */
@@ -19,7 +19,7 @@
 #define PIC2_COMMAND	PIC2
 #define PIC2_DATA		(PIC2+1) 	/*This is basically port 0xA1	*/
 #define PIC_EOI			0x20 		/*End-of-interrupt command code	*/
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 /* Macros. */
 /* Check if the bit BIT in FLAGS is set. */
@@ -161,32 +161,19 @@ entry (unsigned long magic, unsigned long addr)
 
 	// Note - We need to write each individual exception	
 
-		lidt(idt_desc_ptr);
-		set_idt();
+	lidt(idt_desc_ptr);
+	set_idt();
 
 	/* Init the PIC */
-		i8259_init();
+	i8259_init();
 
 	/* Initialize devices, memory, filesystem, enable device interrupts on the
 	 * PIC, any other initialization stuff... */
-
-//////////////////////	WRITTEN BY ME 	/////////////////////////////////////////////////////////////////////////////
-//RTC interrupts are disabled by default. If you turn on the RTC interrupts, the RTC will periodically generate IRQ 8.
-//When programming the RTC, it is important that the NMI (non-maskable-interrupt) and other interrupts are disabled.
-//The 2 IO ports used for the RTC and CMOS are 0x70 and 0x71.
-//Port 0x70 is used to specify an index or "register number", and to disable NMI. 
-//Port 0x71 is used to read or write from/to that byte of CMOS configuration space.
-//Only three bytes of CMOS RAM are used to control the RTC periodic interrupt function. 
-//They are called RTC Status Register A, B, and C. They are at offset 0xA, 0xB, and 0xC in the CMOS RAM. 
-
-	//disable_ints();		// important that no interrupts happen (perform a CLI)
 
 	init_rtc();				//
 	init_keyboard();		//
 	printf("initialization is completed\n");
 //	enable_ints();		// (perform an STI) and reenable NMI if you wish
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 	/* Enable interrupts */
 	/* Do not enable the following until after you have set up your
