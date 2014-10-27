@@ -7,7 +7,8 @@
 #define NUM_COLS 80
 #define NUM_ROWS 25
 #define ATTRIB 0x7
-
+#define ATTRIB_BLUE 0x17
+ 
 static int screen_x;
 static int screen_y;
 static char* video_mem = (char *)VIDEO;
@@ -26,6 +27,23 @@ clear(void)
     for(i=0; i<NUM_ROWS*NUM_COLS; i++) {
         *(uint8_t *)(video_mem + (i << 1)) = ' ';
         *(uint8_t *)(video_mem + (i << 1) + 1) = ATTRIB;
+    }
+}
+
+
+/*
+* void clear_blue(void);
+*   Inputs: void
+*   Return Value: none
+*	Function: Clears video memory to blue screen
+*/
+void
+clear_blue(void)
+{
+    int32_t i;
+    for(i=0; i<NUM_ROWS*NUM_COLS; i++) {
+        *(uint8_t *)(video_mem + (i << 1)) = ' ';
+        *(uint8_t *)(video_mem + (i << 1) + 1) = ATTRIB_BLUE;
     }
 }
 

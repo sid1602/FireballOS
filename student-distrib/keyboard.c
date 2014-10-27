@@ -85,8 +85,24 @@ void kbd_int_handler()
 						int ptr = 45;
 						int a = ptr / 0;
 						printf("%d",a);
+ 						
+						//int * ptr = 0;
+						//int val = *ptr;
+						//printf("%d", ptr);	
+ 						
+						//int a, b, c; // some integers
+						//int *pi;     // a pointer to an integer
+
+						//a = 5;
+						//pi = &a; // pi points to a
+						//b = *pi; // b is now 5
+						//pi = NULL;
+						//c = *pi; // this is a NULL pointer dereference
+						//printf("%d", c);
  						break;	}
 	}
+//	index++;
+//	if(index == 81)
 	send_eoi(1);										//inform when finished handling interrupt
 	enable_irq(1);										//unmask so that new interrupts can be taken care of
 }

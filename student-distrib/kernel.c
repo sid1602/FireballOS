@@ -162,8 +162,6 @@ entry (unsigned long magic, unsigned long addr)
 
 	// Note - We need to write each individual exception	
 
-	lidt(idt_desc_ptr);
-	set_idt();
 
 	/* Init the PIC */
 	i8259_init();
@@ -171,7 +169,15 @@ entry (unsigned long magic, unsigned long addr)
 	/* Initialize devices, memory, filesystem, enable device interrupts on the
 	 * PIC, any other initialization stuff... */
 	init_paging();
-	test_paging();
+
+	lidt(idt_desc_ptr);
+	set_idt();
+
+	//unsigned long *test = 0x8000000;
+	unsigned long *test = 0x0000000;
+	printf("\n%x\n", *test);
+
+	//test_paging();
 	init_rtc();				//
 	init_keyboard();		//
 	printf("initialization is completed\n");
