@@ -25,6 +25,12 @@ ldt_desc:
 	.word KERNEL_LDT
 	.long ldt
 
+.align 4	
+	.word 0 # Padding
+gdt_desc:
+	.word gdt_bottom - gdt - 1
+	.long gdt
+
 	.align 4
 tss:
 _tss:
@@ -81,13 +87,7 @@ tss_desc_ptr:
 ldt_desc_ptr:
 	.quad 0
 
-# ///////////////////////////////////////////////////////////////////////////////////////////////////////
-.align 4
-	.word 0 # Padding				#giving the 16 bit padding 
-gdt_desc:					
-	.word gdt_bottom - gdt - 1 		#	
-	.long gdt
-# ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 gdt_bottom:
 

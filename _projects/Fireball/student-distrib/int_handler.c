@@ -75,12 +75,14 @@ void set_interrupt()
 
 void divide_error()
 {
+	clear_blue();
 	printf("Divide error!");
 	while(1){}
 }
 
 void NMI_Interrupt()
 {
+	clear_blue();	
 	printf("NMI Interrupt!");
 	while(1){}
 }
@@ -93,90 +95,105 @@ void breakpoint()
 
 void overflow()
 {
+	clear_blue();
 	printf("overflow!");
 	while(1){}
 }
 
 void BOUND_range_exceeded()
 {
+	clear_blue();
 	printf("BOUND range exceeded!");
 	while(1){}
 }
 
 void invalid_opcode()
 {
+	clear_blue();
 	printf("Invalid Opcode!");
 	while(1){}
 }
 
 void device_not_available()
 {
+	clear_blue();
 	printf("Device Not available");
 	while(1){}
 }
 
 void double_fault()
 {
+	clear_blue();
 	printf("Double Fault!");
 	while(1){}
 }
 
 void coprocessor_segment_overrun()
 {
+	clear_blue();
 	printf("coprocessor_segment_overrun!");
 	while(1){}
 }
 
 void invalid_TSS()
 {
+	clear_blue();
 	printf("Invalid TSS!");
 	while(1){}
 }
 
 void segment_not_present()
 {
+	clear_blue();
 	printf("Segment not present!");
 	while(1){}
 }
 
 void stack_segment_fault()
 {
+	clear_blue();
 	printf("Stack Segment Fault!");
 	while(1){}
 }
 
 void general_protection()
 {
+	clear_blue();
 	printf("General Protection");
 	while(1){}
 }
 
 void page_fault()
 {
+	clear_blue();
 	printf("Page Fault!");
 	while(1){}
 }
 
 void floating_point_error()
 {
+	clear_blue();
 	printf("Floating Point Error!");
 	while(1){}
 }
 
 void alignment_check()
 {
+	clear_blue();
 	printf("Alignment Check!");
 	while(1){}
 }
 
 void machine_check()
 {
+	clear_blue();
 	printf("Machine Check");
 	while(1){}
 }
 
 void floating_point_exception()
 {
+	clear_blue();
 	printf("Floating Point Exception");
 	while(1){}
 }

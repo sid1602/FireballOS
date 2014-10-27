@@ -1,5 +1,6 @@
 #include "rtc.h"
 #include "lib.h"
+#include "i8259.h"
 
 /* RTC Interrupt handler */
 /********************************************************
@@ -12,6 +13,11 @@ rtc_int_handler()										*
 ********************************************************/
 void rtc_int_handler()
 {
-	printf("RTC INTERRUPT HANDLER");
+	disable_irq(8);
+	//printf("RTC INTERRUPT HANDLER");
 	test_interrupts();									//calls function that writes video memory to screen.
+	send_eoi(8);
+	outb(0x0C, 0x70);									// select register C
+	inb(0x71);											// just throw away contents
+	enable_irq(8);
 }
