@@ -70,7 +70,10 @@ void kbd_int_handler()
 		case 0x15:	{	printf("%c", 121 - offset);	break;	}
 		case 0x2C:	{	printf("%c", 122 - offset);	break;	}		
 /*	checking special characters	*/	
-		case 0x0C:	{	printf("-");	break;	}
+		case 0x0C:	{	//printf("-");	
+						int * ptr = NULL;
+						printf("%d", *ptr);
+						break;	}
  		case 0x0D:	{	printf("=");	break;	}	
  		case 0x1A:	{	printf("[");	break;	}
  		case 0x1B:	{	printf("]");	break;	}

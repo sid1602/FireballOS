@@ -158,30 +158,22 @@ entry (unsigned long magic, unsigned long addr)
 		ltr(KERNEL_TSS);
 	}
 
-	/* EXCEPTION TABLE ENTRY */
-
-	// Note - We need to write each individual exception	
-
-
 	/* Init the PIC */
 	i8259_init();
 
 	/* Initialize devices, memory, filesystem, enable device interrupts on the
 	 * PIC, any other initialization stuff... */
-	init_paging();
 
 	lidt(idt_desc_ptr);
 	set_idt();
 
-	//unsigned long *test = 0x8000000;
-	unsigned long *test = 0x0000000;
-	printf("\n%x\n", *test);
+	init_paging();
+	// test_paging();
 
-	//test_paging();
-	init_rtc();				//
-	init_keyboard();		//
+	// init_rtc();				
+	init_keyboard();		
+
 	printf("initialization is completed\n");
-//	enable_ints();		// (perform an STI) and reenable NMI if you wish
 
 	/* Enable interrupts */
 	/* Do not enable the following until after you have set up your

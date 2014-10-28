@@ -87,8 +87,6 @@ tss_desc_ptr:
 ldt_desc_ptr:
 	.quad 0
 
-
-
 gdt_bottom:
 
 	.align 16
@@ -113,3 +111,5 @@ _idt:
 	.endr
 
 idt_bottom:
+
+

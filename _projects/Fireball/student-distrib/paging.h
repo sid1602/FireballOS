@@ -17,9 +17,7 @@
 
 #ifndef ASM
 
-// typedef struct PDE {
-// 	union{
-
+// A page directory element
 typedef union PDE {
 		uint32_t val;
 		struct {
@@ -35,31 +33,25 @@ typedef union PDE {
 			uint32_t avail : 3;
 			uint32_t page_table_base : 20;
 		}__attribute__((packed));
-//	};
 } PDE_t;
 
-typedef struct __attribute__((packed)) PTE {
-
-	uint32_t present : 1;
-	uint32_t read_write : 1;
-	uint32_t user_super : 1;
-	uint32_t write_through : 1;
-	uint32_t cache_disabled : 1;
-	uint32_t accessed : 1;
-	uint32_t dirty : 1;
-	uint32_t page_table_attribute : 1;
-	uint32_t global : 1;
-	uint32_t avail : 3;
-	uint32_t page_base : 20;
-	
+// A page table element
+typedef union PTE {
+	uint32_t val;
+	struct {
+		uint32_t present : 1;
+		uint32_t read_write : 1;
+		uint32_t user_super : 1;
+		uint32_t write_through : 1;
+		uint32_t cache_disabled : 1;
+		uint32_t accessed : 1;
+		uint32_t dirty : 1;
+		uint32_t page_table_attribute : 1;
+		uint32_t global : 1;
+		uint32_t avail : 3;
+		uint32_t page_base : 20;
+	}__attribute__((packed)); 	
 } PTE_t;
-
-// PDE_t PD[NUM_PDE] __attribute__((aligned (0x400000)));
-// PTE_t VIDEO_PT[NUM_PTE] __attribute__((aligned (0x1000)));
-
-// extern PDE_t PD[NUM_PDE];
-// extern PTE_t VIDEO_PT[NUM_PTE];
-
 
 /* Sets page base address in PDE for 4MB pages */
 #define SET_PDE_4MB_PAGE(str, addr) 									\
@@ -93,10 +85,10 @@ do { 																	\
  * Inputs: None
  * Clobbers eax
  */
-#define set_paging()                    		\
+#define set_PG()                    			\
 do {                                   			\
 	asm volatile("movl %%cr0, %%eax \n\t"		\
-		 		 "orl  0x80000000, %%eax \n\t"	\
+		 		 "orl  $0x80000000, %%eax \n\t"	\
 				 "movl %%eax, %%cr0"			\
 				 :								\
 				 :								\
@@ -112,7 +104,23 @@ do {                                   			\
 #define set_PSE()                    			\
 do {                                   			\
 	asm volatile("movl %%cr4, %%eax \n\t"		\
-		 		 "orl  0x00000010, %%eax \n\t"	\
+		 		 "orl  $0x00000010, %%eax \n\t"	\
+				 "movl %%eax, %%cr4"			\
+				 :								\
+				 :								\
+				 : "eax", "memory"				\
+				 );       						\
+} while(0)	
+
+/* Enables global pages by setting the CR4[7] bit
+ * Outputs: None
+ * Inputs: None
+ * Clobbers eax
+ */
+#define set_PGE()                    			\
+do {                                   			\
+	asm volatile("movl %%cr4, %%eax \n\t"		\
+		 		 "orl  $0x00000080, %%eax \n\t"	\
 				 "movl %%eax, %%cr4"			\
 				 :								\
 				 :								\
