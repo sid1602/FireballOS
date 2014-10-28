@@ -25,9 +25,7 @@ _start:
 
 continue:
 	# Load the GDT
-# /////////////////////////////////////////////////////////////////////////////////
-	lgdt 	gdt_desc			#pointer to start of gdt table from file x86_desc.S 
-# /////////////////////////////////////////////////////////////////////////////////
+	lgdt 	gdt_desc	#this is the pointer to the starting of the gdt table from file x86_desc.S 
 	# Load CS with the new descriptor value
 	ljmp    $KERNEL_CS, $keep_going
 

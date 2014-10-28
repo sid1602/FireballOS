@@ -30,7 +30,6 @@ clear(void)
     }
 }
 
-
 /*
 * void clear_blue(void);
 *   Inputs: void
